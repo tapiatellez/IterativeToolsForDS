@@ -1,0 +1,57 @@
+stages:
+  data_load:
+    cmd: python src/stages/data_load.py --config=params.yaml
+    deps:
+      - src/stages/data_load.py
+    params:
+      - data_load
+    outs:
+      - data/raw/iris.csv
+
+  featurize:
+    cmd: python src/stages/featurize.py --config=params.yaml
+    deps:
+      - src/stages/featurize.py
+    params:
+      - data_load
+      - featurize
+    outs:
+      - data/processed/featured_iris.csv
+
+  data_split:
+    cmd: python src/stages/data_split.py --config=params.yaml
+    deps:
+      - src/stages/data_split.py
+    params:
+      - base
+      - featurize
+      - data_split
+    outs:
+      - data/processed/train_iris.csv
+      - data/processed/test_iris.csv
+
+  train:
+    cmd: python src/stages/train.py --config=params.yaml
+    deps:
+      - src/stages/train.py
+      - src/train/train.py
+    params:
+      - featurize
+      - data_split
+      - train
+    outs:
+      - models/model.joblib
+
+  evaluate:
+    cmd: python src/stages/evaluate.py --config=params.yaml
+    deps:
+      - src/stages/evaluate.py
+      - src/utils/logs.py
+    params:
+      - base
+      - data_split
+      - train
+      - evaluate
+    outs:
+      - reports/metrics.json
+      - reports/confusion_matrix.png

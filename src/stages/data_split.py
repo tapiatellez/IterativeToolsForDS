@@ -18,11 +18,11 @@ def split_data(config_path: Text) -> None:
     logger = get_logger("SPLIT_DATA", log_level=config["base"]["log_level"])
     # Get the data
     logger.info("Load dataset with features")
-    dataset = pd.read_csv(config["data"]["features_path"])
+    dataset = pd.read_csv(config["featurize"]["features_path"])
     # Split the data
     logger.info("Split the dataset")
     random_state = config["base"]["seed"]
-    test_size = config["data"]["test_size"]
+    test_size = config["data_split"]["test_size"]
 
     train_dataset, test_dataset = train_test_split(
         dataset, test_size=test_size, random_state=random_state
@@ -30,8 +30,8 @@ def split_data(config_path: Text) -> None:
 
     # Save the data
     logger.info("Save train and test dataset")
-    train_dataset.to_csv(config["data"]["trainset_path"])
-    test_dataset.to_csv(config["data"]["testset_path"])
+    train_dataset.to_csv(config["data_split"]["trainset_path"])
+    test_dataset.to_csv(config["data_split"]["testset_path"])
 
 
 if __name__ == "__main__":

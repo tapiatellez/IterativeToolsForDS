@@ -19,7 +19,7 @@ def data_load(config_path: Text) -> None:
     ]
     # Save raw data
     logger.info("Save raw data.")
-    dataset.to_csv(config["data"]["dataset_csv"], index=False)
+    dataset.to_csv(config["data_load"]["dataset_csv"], index=False)
 
 
 if __name__ == "__main__":

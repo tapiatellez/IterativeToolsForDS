@@ -1,0 +1,165 @@
+schema: '2.0'
+stages:
+  data_load:
+    cmd: python src/stages/data_load.py --config=params.yaml
+    deps:
+    - path: src/stages/data_load.py
+      md5: f56185d0380f8b078132740bc92ba00d
+      size: 891
+    params:
+      params.yaml:
+        data_load:
+          dataset_csv: data/raw/iris.csv
+    outs:
+    - path: data/raw/iris.csv
+      md5: 4224576f0267bf88902f87f0f6200967
+      size: 2757
+  featurize:
+    cmd: python src/stages/featurize.py --config=params.yaml
+    deps:
+    - path: src/stages/featurize.py
+      md5: dce78c96a905213a6ac86e1508e4dee8
+      size: 1616
+    params:
+      params.yaml:
+        data_load:
+          dataset_csv: data/raw/iris.csv
+        featurize:
+          features_path: data/processed/featured_iris.csv
+          target_column: target
+    outs:
+    - path: data/processed/featured_iris.csv
+      md5: 5d03a1564b3038fc35a842f8e4bde491
+      size: 7260
+  data_split:
+    cmd: python src/stages/data_split.py --config=params.yaml
+    deps:
+    - path: src/stages/data_split.py
+      md5: 14554eacf4d25beb814b463d6864bd6b
+      size: 1282
+    params:
+      params.yaml:
+        base:
+          seed: 42
+          log_level: INFO
+        data_split:
+          test_size: 0.2
+          trainset_path: data/processed/train_iris.csv
+          testset_path: data/processed/test_iris.csv
+        featurize:
+          features_path: data/processed/featured_iris.csv
+          target_column: target
+    outs:
+    - path: data/processed/test_iris.csv
+      md5: 0f1da7c874a4dfdea4f449048b8c4399
+      size: 1593
+    - path: data/processed/train_iris.csv
+      md5: 1b83686c63d93c6e8f1e4be057ff0ce5
+      size: 6115
+  train:
+    cmd: python src/stages/train.py --config=params.yaml
+    deps:
+    - path: src/stages/train.py
+      md5: 14f870d6a3c5ac6e41444e78fcb3c526
+      size: 1329
+    - path: src/train/train.py
+      md5: 3a30784ce3b019b16d407267000581cf
+      size: 1626
+    params:
+      params.yaml:
+        data_split:
+          test_size: 0.2
+          trainset_path: data/processed/train_iris.csv
+          testset_path: data/processed/test_iris.csv
+        featurize:
+          features_path: data/processed/featured_iris.csv
+          target_column: target
+        train:
+          cv: 3
+          estimator_name: logreg
+          estimators:
+            logreg:
+              param_grid:
+                C:
+                - 0.001
+                max_iter:
+                - 100
+                solver:
+                - lbfgs
+                multi_class:
+                - multinomial
+            svm:
+              param_grid:
+                C:
+                - 0.1
+                - 1.0
+                kernel:
+                - rbf
+                - linear
+                gamma:
+                - scale
+                degree:
+                - 3
+                - 5
+          model_path: models/model.joblib
+    outs:
+    - path: models/model.joblib
+      md5: b91f5505ed2d7fde58f0fe9844a7027b
+      size: 2915
+  evaluate:
+    cmd: python src/stages/evaluate.py --config=params.yaml
+    deps:
+    - path: src/stages/evaluate.py
+      md5: ad7b74a6d3e87bd6d2d688e04e46974e
+      size: 2434
+    - path: src/utils/logs.py
+      md5: 5b1df3285c759cac88181816b6cacd9d
+      size: 1083
+    params:
+      params.yaml:
+        base:
+          seed: 42
+          log_level: INFO
+        data_split:
+          test_size: 0.2
+          trainset_path: data/processed/train_iris.csv
+          testset_path: data/processed/test_iris.csv
+        evaluate:
+          reports_dir: reports
+          metrics_file: metrics.json
+          confusion_matrix_image: confusion_matrix.png
+        train:
+          cv: 3
+          estimator_name: logreg
+          estimators:
+            logreg:
+              param_grid:
+                C:
+                - 0.001
+                max_iter:
+                - 100
+                solver:
+                - lbfgs
+                multi_class:
+                - multinomial
+            svm:
+              param_grid:
+                C:
+                - 0.1
+                - 1.0
+                kernel:
+                - rbf
+                - linear
+                gamma:
+                - scale
+                degree:
+                - 3
+                - 5
+          model_path: models/model.joblib
+    outs:
+    - path: reports/confusion_matrix.png
+      md5: 32d5e808ac95d7cd3844b4fa29bcc5d8
+      size: 24920
+    - path: reports/metrics.json
+      md5: 3329ba1a6b18407f725a1e25a5500560
+      size: 17

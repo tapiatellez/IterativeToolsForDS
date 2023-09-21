@@ -17,7 +17,7 @@ def feature_engineering(config_path: Text) -> None:
     logger = get_logger("FEATURE_ENGINEERING", log_level=config["base"]["log_level"])
     # Get the data
     logger.info("Load dataset locally")
-    dataset = pd.read_csv(config["data"]["dataset_csv"])
+    dataset = pd.read_csv(config["data_load"]["dataset_csv"])
     # Perform feature engineering
     logger.info("Create features")
     dataset["sepal_length_to_sepal_width"] = (
@@ -41,7 +41,7 @@ def feature_engineering(config_path: Text) -> None:
     ]
     # Save dataset with new features
     logger.info("Save dataset with new features")
-    dataset.to_csv(config["data"]["features_path"], index=False)
+    dataset.to_csv(config["featurize"]["features_path"], index=False)
 
 
 if __name__ == "__main__":
