@@ -23,7 +23,7 @@ def train_model(config_path: Text) -> None:
     logger.info("Get the training dataset")
     train_dataset = pd.read_csv(config["data_split"]["trainset_path"])
 
-    # Train (Use function from separate module)
+    # Train (Use function from separate module for reusability)
     model = train(
         df=train_dataset,
         target_column=config["featurize"]["target_column"],

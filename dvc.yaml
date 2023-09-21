@@ -12,6 +12,7 @@ stages:
     cmd: python src/stages/featurize.py --config=params.yaml
     deps:
       - src/stages/featurize.py
+      - data/raw/iris.csv
     params:
       - data_load
       - featurize
@@ -22,6 +23,7 @@ stages:
     cmd: python src/stages/data_split.py --config=params.yaml
     deps:
       - src/stages/data_split.py
+      - data/processed/featured_iris.csv
     params:
       - base
       - featurize
@@ -35,6 +37,7 @@ stages:
     deps:
       - src/stages/train.py
       - src/train/train.py
+      - data/processed/train_iris.csv
     params:
       - featurize
       - data_split
@@ -47,6 +50,8 @@ stages:
     deps:
       - src/stages/evaluate.py
       - src/utils/logs.py
+      - data/processed/test_iris.csv
+      - models/model.joblib
     params:
       - base
       - data_split

@@ -17,6 +17,9 @@ stages:
   featurize:
     cmd: python src/stages/featurize.py --config=params.yaml
     deps:
+    - path: data/raw/iris.csv
+      md5: 4224576f0267bf88902f87f0f6200967
+      size: 2757
     - path: src/stages/featurize.py
       md5: dce78c96a905213a6ac86e1508e4dee8
       size: 1616
@@ -34,6 +37,9 @@ stages:
   data_split:
     cmd: python src/stages/data_split.py --config=params.yaml
     deps:
+    - path: data/processed/featured_iris.csv
+      md5: 5d03a1564b3038fc35a842f8e4bde491
+      size: 7260
     - path: src/stages/data_split.py
       md5: 14554eacf4d25beb814b463d6864bd6b
       size: 1282
@@ -59,9 +65,12 @@ stages:
   train:
     cmd: python src/stages/train.py --config=params.yaml
     deps:
+    - path: data/processed/train_iris.csv
+      md5: 1b83686c63d93c6e8f1e4be057ff0ce5
+      size: 6115
     - path: src/stages/train.py
-      md5: 14f870d6a3c5ac6e41444e78fcb3c526
-      size: 1329
+      md5: 313523342b69a49102d2bd2df33ddc9a
+      size: 1345
     - path: src/train/train.py
       md5: 3a30784ce3b019b16d407267000581cf
       size: 1626
@@ -75,7 +84,7 @@ stages:
           features_path: data/processed/featured_iris.csv
           target_column: target
         train:
-          cv: 3
+          cv: 4
           estimator_name: logreg
           estimators:
             logreg:
@@ -104,11 +113,17 @@ stages:
           model_path: models/model.joblib
     outs:
     - path: models/model.joblib
-      md5: b91f5505ed2d7fde58f0fe9844a7027b
-      size: 2915
+      md5: 48a0163e044f9f95ce89293cb507529a
+      size: 2995
   evaluate:
     cmd: python src/stages/evaluate.py --config=params.yaml
     deps:
+    - path: data/processed/test_iris.csv
+      md5: 0f1da7c874a4dfdea4f449048b8c4399
+      size: 1593
+    - path: models/model.joblib
+      md5: 48a0163e044f9f95ce89293cb507529a
+      size: 2995
     - path: src/stages/evaluate.py
       md5: ad7b74a6d3e87bd6d2d688e04e46974e
       size: 2434
@@ -129,7 +144,7 @@ stages:
           metrics_file: metrics.json
           confusion_matrix_image: confusion_matrix.png
         train:
-          cv: 3
+          cv: 4
           estimator_name: logreg
           estimators:
             logreg:
