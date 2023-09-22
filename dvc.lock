@@ -84,7 +84,7 @@ stages:
           features_path: data/processed/featured_iris.csv
           target_column: target
         train:
-          cv: 4
+          cv: 3
           estimator_name: logreg
           estimators:
             logreg:
@@ -113,8 +113,8 @@ stages:
           model_path: models/model.joblib
     outs:
     - path: models/model.joblib
-      md5: 48a0163e044f9f95ce89293cb507529a
-      size: 2995
+      md5: d23266b28208626f71eff61aa9835e9a
+      size: 2915
   evaluate:
     cmd: python src/stages/evaluate.py --config=params.yaml
     deps:
@@ -122,8 +122,8 @@ stages:
       md5: 0f1da7c874a4dfdea4f449048b8c4399
       size: 1593
     - path: models/model.joblib
-      md5: 48a0163e044f9f95ce89293cb507529a
-      size: 2995
+      md5: d23266b28208626f71eff61aa9835e9a
+      size: 2915
     - path: src/stages/evaluate.py
       md5: ad7b74a6d3e87bd6d2d688e04e46974e
       size: 2434
@@ -144,7 +144,7 @@ stages:
           metrics_file: metrics.json
           confusion_matrix_image: confusion_matrix.png
         train:
-          cv: 4
+          cv: 3
           estimator_name: logreg
           estimators:
             logreg:

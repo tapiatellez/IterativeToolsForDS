@@ -15,7 +15,7 @@ data_split:
   testset_path: "data/processed/test_iris.csv"
 
 train:
-  cv: 4
+  cv: 1
   estimator_name: logreg
   estimators:
     logreg: # sklearn.linear_model.LogisticRegression
