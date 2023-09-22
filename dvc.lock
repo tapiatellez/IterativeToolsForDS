@@ -84,13 +84,13 @@ stages:
           features_path: data/processed/featured_iris.csv
           target_column: target
         train:
-          cv: 3
+          cv: 2
           estimator_name: logreg
           estimators:
             logreg:
               param_grid:
                 C:
-                - 0.001
+                - 1.0
                 max_iter:
                 - 100
                 solver:
@@ -113,8 +113,8 @@ stages:
           model_path: models/model.joblib
     outs:
     - path: models/model.joblib
-      md5: d23266b28208626f71eff61aa9835e9a
-      size: 2915
+      md5: 20c68268a5c326e7175fbaabaa33e55d
+      size: 2835
   evaluate:
     cmd: python src/stages/evaluate.py --config=params.yaml
     deps:
@@ -122,11 +122,11 @@ stages:
       md5: 0f1da7c874a4dfdea4f449048b8c4399
       size: 1593
     - path: models/model.joblib
-      md5: d23266b28208626f71eff61aa9835e9a
-      size: 2915
+      md5: 20c68268a5c326e7175fbaabaa33e55d
+      size: 2835
     - path: src/stages/evaluate.py
-      md5: ad7b74a6d3e87bd6d2d688e04e46974e
-      size: 2434
+      md5: 6c92347920094cfe8303cecff9d7ed09
+      size: 3355
     - path: src/utils/logs.py
       md5: 5b1df3285c759cac88181816b6cacd9d
       size: 1083
@@ -143,14 +143,15 @@ stages:
           reports_dir: reports
           metrics_file: metrics.json
           confusion_matrix_image: confusion_matrix.png
+          confusion_matrix_data: cm_plot.csv
         train:
-          cv: 3
+          cv: 2
           estimator_name: logreg
           estimators:
             logreg:
               param_grid:
                 C:
-                - 0.001
+                - 1.0
                 max_iter:
                 - 100
                 solver:
@@ -172,6 +173,9 @@ stages:
                 - 5
           model_path: models/model.joblib
     outs:
+    - path: reports/cm_plot.csv
+      md5: c189f029072011dba0a20d6d06a8b4f5
+      size: 575
     - path: reports/confusion_matrix.png
       md5: 32d5e808ac95d7cd3844b4fa29bcc5d8
       size: 24920

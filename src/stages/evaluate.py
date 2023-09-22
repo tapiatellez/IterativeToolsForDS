@@ -11,6 +11,23 @@ from src.report.visualize import plot_confusion_matrix
 from sklearn.datasets import load_iris
 
 
+def convert_to_labels(indexes, labels):
+    result = []
+    for i in indexes:
+        result.append(labels[i])
+    return result
+
+
+def write_confusion_matrix_data(y_true, predicted, labels, filename):
+    assert len(predicted) == len(y_true)
+    predicted_labels = convert_to_labels(predicted, labels)
+    true_labels = convert_to_labels(y_true, labels)
+    cf = pd.DataFrame(
+        list(zip(true_labels, predicted_labels)), columns=["y_true", "predicted"]
+    )
+    cf.to_csv(filename, index=False)
+
+
 def evaluate_model(config_path: Text) -> None:
     """Evaluate the model
     Params
@@ -32,6 +49,7 @@ def evaluate_model(config_path: Text) -> None:
     y_test = test_dataset.loc[:, "target"].values.astype("int32")
     X_test = test_dataset.drop("target", axis=1).values.astype("float32")
     prediction = model.predict(X_test)
+    labels = load_iris(as_frame=True).target_names.tolist()
     cm = confusion_matrix(prediction, y_test)
     f1 = f1_score(y_true=y_test, y_pred=prediction, average="macro")
     report = {
@@ -61,6 +79,15 @@ def evaluate_model(config_path: Text) -> None:
     )
     plt.savefig(confusion_matrix_png_path)
     logger.info(f"Confusion matrix saved to : {confusion_matrix_png_path}")
+
+    logger.info("Save confusion matrix data")
+    confusion_matrix_data_path = (
+        reports_folder / config["evaluate"]["confusion_matrix_data"]
+    )
+    write_confusion_matrix_data(
+        y_test, prediction, labels=labels, filename=confusion_matrix_data_path
+    )
+    logger.info(f"Confusion matrix data saved to : {confusion_matrix_data_path}")
 
 
 if __name__ == "__main__":
